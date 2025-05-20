@@ -4,34 +4,44 @@
   <meta charset="UTF-8">
   <title>Jeopardy Game</title>
   <style>
-    body { font-family: Arial; text-align: center; background-color: #001f3f; color: white; }
-    select { font-size: 16px; margin-top: 20px; padding: 5px; }
-    #loading { font-size: 20px; color: yellow; margin-top: 20px; }
-    table { margin: 2em auto; border-collapse: collapse; }
+    body { font-family: Arial; text-align: center; background-color: #001f3f; color: white; margin: 0; padding: 0; }
+    select, button { font-size: 16px; margin: 10px; padding: 5px 10px; }
+    #controls { margin-top: 20px; }
+    #loading { font-size: 20px; color: yellow; margin-top: 10px; }
+    table { margin: 1em auto; border-collapse: collapse; }
     th, td { border: 2px solid white; padding: 16px; width: 150px; height: 90px; background-color: #0074D9; cursor: pointer; }
     th { background-color: #001f3f; height: 50px; }
     .used { background-color: #111; cursor: default; }
     .popup {
       position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
       background: white; color: black; padding: 20px; border: 2px solid black;
-      display: none; z-index: 10;
+      display: none; z-index: 10; max-width: 90%; width: 600px;
     }
     .popup button { margin-top: 10px; }
-    #scores { margin-top: 10px; font-size: 18px; }
+    #scores { font-size: 18px; margin-bottom: 10px; }
+    .tv-mode table { width: 95%; }
+    .tv-mode th, .tv-mode td { width: auto; padding: 12px; height: 80px; font-size: 1.1em; }
   </style>
 </head>
 <body>
   <h1>Jeopardy Game</h1>
-  <label for="round-select">Select Round:</label>
-  <select id="round-select" onchange="loadGame()">
-    <option value="regular">Regular Jeopardy</option>
-    <option value="double">Double Jeopardy</option>
-  </select>
+  <div id="controls">
+    <label for="round-select">Select Round:</label>
+    <select id="round-select">
+      <option value="regular">Regular Jeopardy</option>
+      <option value="double">Double Jeopardy</option>
+    </select>
+    <button onclick="loadGame()">New Game</button>
+    <label><input type="checkbox" id="tv-toggle" onchange="toggleTVMode()"> TV Mode</label>
+    <label><input type="checkbox" id="year-toggle"> Show Year</label>
+  </div>
   <div id="scores">Score: $<span id="score">0</span></div>
   <div id="loading">Loading game...</div>
   <table id="board"></table>
   <div class="popup" id="popup">
     <div id="special" style="color: red; font-weight: bold;"></div>
+    <div id="clue-value" style="font-weight: bold;"></div>
+    <div id="year-label" style="font-style: italic; color: #555;"></div>
     <div id="clue"></div>
     <button onclick="revealAnswer()">Show Answer</button>
     <div id="answer" style="margin-top:10px; font-weight: bold;"></div>
