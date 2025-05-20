@@ -13,6 +13,33 @@
     justify-content: center;
     gap: 20px;
     flex-wrap: wrap;
+        #score-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.player-score-group {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+}
+
+/* Distinct colors per player */
+.player-0 button { background-color: #0074D9; color: white; }
+.player-1 button { background-color: #2ECC40; color: white; }
+.player-2 button { background-color: #FF851B; color: white; }
+.player-3 button { background-color: #B10DC9; color: white; }
+
+.score-button {
+  padding: 6px 12px;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
   }
 
   .player-row {
