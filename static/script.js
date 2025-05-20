@@ -4,6 +4,7 @@ let currentIsDD = false;
 let score = 0;
 
 async function loadGame() {
+  document.getElementById("loading").style.display = "block";
   const round = document.getElementById("round-select").value;
   const res = await fetch(`/game?round=${round}`);
   const data = await res.json();
@@ -35,6 +36,7 @@ async function loadGame() {
 
   score = 0;
   updateScore();
+  document.getElementById("loading").style.display = "none";
 }
 
 function showClue(q, cell) {
