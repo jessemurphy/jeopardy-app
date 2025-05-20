@@ -3,7 +3,6 @@ import sqlite3
 import random
 import os
 import gdown
-import html
 
 app = Flask(__name__)
 DB_PATH = "questions.db"
@@ -55,8 +54,8 @@ def game():
             year = ""
         questions = []
         for i, flds in enumerate(selected):
-            clue = html.unescape(flds[5].strip().replace("\\", ""))
-            answer = html.unescape(flds[6].strip().replace("\\", ""))
+            clue = flds[5].strip()
+            answer = flds[6].strip()
             value = (i + 1) * 100 * multiplier
             questions.append({"value": value, "clue": clue, "answer": answer, "daily_double": False, "year": year})
         board[cat] = questions

@@ -8,7 +8,7 @@ let scores = [];
 
 function startGame() {
   const count = parseInt(document.getElementById("player-count").value);
-  players = Array.from({ length: count }, (_, i) => `P${i + 1}`);
+  players = Array.from({ length: count }, (_, i) => document.getElementById(`player-name-${i}`).value || `P${i + 1}`);
   scores = Array(count).fill(0);
   document.getElementById("player-setup").style.display = "none";
   document.getElementById("controls").style.display = "block";
@@ -138,6 +138,29 @@ function toggleTVMode() {
 }
 
 window.onload = () => {
+document.getElementById("player-count").addEventListener("change", () => {
+  const count = parseInt(document.getElementById("player-count").value);
+  const setup = document.getElementById("player-setup");
+  let inputs = document.getElementById("name-inputs");
+  if (!inputs) {
+    inputs = document.createElement("div");
+    inputs.id = "name-inputs";
+    setup.appendChild(inputs);
+  }
+  inputs.innerHTML = "";
+  for (let i = 0; i < count; i++) {
+    const label = document.createElement("label");
+    label.textContent = `Player ${i + 1}: `;
+    const input = document.createElement("input");
+    input.type = "text";
+    input.id = `player-name-${i}`;
+    input.placeholder = `P${i + 1}`;
+    input.style.margin = "5px";
+    inputs.appendChild(label);
+    inputs.appendChild(input);
+    inputs.appendChild(document.createElement("br"));
+  }
+});
   document.getElementById("loading").style.display = "none";
   document.getElementById("year-toggle").addEventListener("change", () => {
     if (window.boardData) {
