@@ -6,11 +6,9 @@ import gdown
 
 app = Flask(__name__)
 DB_PATH = "questions.db"
-
 GOOGLE_DRIVE_FILE_ID = "1NCqMTSkql2lzxfgcx-tmRJouS_lkKe5j"
 GOOGLE_DRIVE_URL = f"https://drive.google.com/uc?id={GOOGLE_DRIVE_FILE_ID}"
 
-# Download the DB using gdown if missing
 def download_db():
     if not os.path.exists(DB_PATH):
         print("Downloading questions.db using gdown...")
@@ -31,40 +29,39 @@ def game():
 
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-    cursor.execute("SELECT flds FROM notes")
-    rows = cursor.fetchall()
 
-    data = []
-    for row in rows:
-        fields = row[0].split('\x1f')
-        if len(fields) >= 7:
-            try:
-                category = fields[3].strip()
-                clue = fields[5].strip()
-                answer = fields[6].strip()
-                value = int(fields[1]) if fields[1].isdigit() else 0
-                data.append((category, value, clue, answer))
-            except:
-                continue
-
-    category_map = {}
-    for cat, val, clue, ans in data:
-        if cat not in category_map:
-            category_map[cat] = []
-        category_map[cat].append({"value": val, "clue": clue, "answer": ans})
-
-    valid_cats = [cat for cat in category_map if len(category_map[cat]) >= 5]
-    chosen_cats = random.sample(valid_cats, 6)
+    # Get categories with at least 5 entries
+    cursor.execute("""
+        SELECT category, COUNT(*) as count FROM (
+            SELECT TRIM(SUBSTR(flds, INSTR(flds, '\x1f', INSTR(flds, '\x1f', 1)+1)+1,
+                        INSTR(flds, '\x1f', INSTR(flds, '\x1f', INSTR(flds, '\x1f', 1)+1)+1)
+                        - INSTR(flds, '\x1f', INSTR(flds, '\x1f', 1)+1) - 1)) AS category
+            FROM notes
+        ) GROUP BY category HAVING count >= 5
+    """)
+    categories = [row[0] for row in cursor.fetchall()]
+    chosen_cats = random.sample(categories, 6)
 
     board = {}
     cells = []
+
     for cat in chosen_cats:
-        selected = random.sample(category_map[cat], 5)
-        for i, q in enumerate(selected):
-            q['value'] = (i + 1) * 100 * multiplier
-            q['daily_double'] = False
-        board[cat] = selected
-        cells.extend([(cat, i)])
+        cursor.execute("""
+            SELECT flds FROM notes
+            WHERE flds LIKE ?
+        """, (f"%{cat}%",))
+        rows = cursor.fetchall()
+        random.shuffle(rows)
+        questions = []
+        for row in rows[:5]:
+            fields = row[0].split('\x1f')
+            if len(fields) >= 7:
+                clue = fields[5].strip()
+                answer = fields[6].strip()
+                value = (len(questions) + 1) * 100 * multiplier
+                questions.append({"value": value, "clue": clue, "answer": answer, "daily_double": False})
+        board[cat] = questions
+        cells.extend([(cat, i) for i in range(5)])
 
     dd_positions = random.sample(cells, num_daily_doubles)
     for cat, idx in dd_positions:
