@@ -40,14 +40,19 @@ async function loadGame() {
     const board = document.getElementById("board");
     board.innerHTML = '';
 
-    const categories = Object.keys(data);
-    const header = document.createElement("tr");
-    categories.forEach(cat => {
-      const th = document.createElement("th");
-      th.textContent = cat;
-      header.appendChild(th);
-    });
-    board.appendChild(header);
+  const categories = Object.keys(data);
+  const header = document.createElement("tr");
+  categories.forEach(cat => {
+    const th = document.createElement("th");
+  
+    const yearToggle = document.getElementById("year-toggle").checked;
+    const year = yearToggle && data[cat][0].year ? ` (${data[cat][0].year})` : "";
+  
+    th.textContent = cat + year;
+    header.appendChild(th);
+  });
+  board.appendChild(header);
+
 
     for (let i = 0; i < 5; i++) {
       const row = document.createElement("tr");
