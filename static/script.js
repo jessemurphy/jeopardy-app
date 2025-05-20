@@ -40,19 +40,16 @@ async function loadGame() {
     const board = document.getElementById("board");
     board.innerHTML = '';
 
-  const categories = Object.keys(data);
-  const header = document.createElement("tr");
-  categories.forEach(cat => {
-    const th = document.createElement("th");
-  
-    const yearToggle = document.getElementById("year-toggle").checked;
-    const year = yearToggle && data[cat][0].year ? ` (${data[cat][0].year})` : "";
-  
-    th.textContent = cat + year;
-    header.appendChild(th);
-  });
-  board.appendChild(header);
-
+    const categories = Object.keys(data);
+    const header = document.createElement("tr");
+    categories.forEach(cat => {
+      const th = document.createElement("th");
+      const showYear = document.getElementById("year-toggle").checked;
+      const year = showYear && data[cat][0].year ? ` (${data[cat][0].year})` : "";
+      th.textContent = cat + year;
+      header.appendChild(th);
+    });
+    board.appendChild(header);
 
     for (let i = 0; i < 5; i++) {
       const row = document.createElement("tr");
@@ -73,6 +70,18 @@ async function loadGame() {
   }
 }
 
+function updateCategoryHeadersWithYear(data) {
+  const headers = document.querySelectorAll("table tr:first-child th");
+  const showYear = document.getElementById("year-toggle").checked;
+  const categories = Object.keys(data);
+
+  headers.forEach((th, i) => {
+    const cat = categories[i];
+    const year = showYear && data[cat][0].year ? ` (${data[cat][0].year})` : "";
+    th.textContent = cat + year;
+  });
+}
+
 function showClue(q, cell) {
   if (popupVisible || cell.classList.contains("used")) return;
   popupVisible = true;
@@ -85,29 +94,28 @@ function showClue(q, cell) {
   document.getElementById("answer").textContent = "";
   document.getElementById("special").textContent = currentIsDD ? "🎯 DAILY DOUBLE!" : "";
   document.getElementById("clue-value").textContent = `For $${currentValue}`;
-  const showYear = document.getElementById("year-toggle").checked;
-  document.getElementById("year-label").textContent = showYear && currentYear ? `📅 From ${currentYear}` : "";
+  document.getElementById("year-label").textContent = "";
 
   const sb = document.getElementById("score-buttons");
   sb.innerHTML = "";
-players.forEach((p, i) => {
-  const group = document.createElement("div");
-  group.className = "player-score-group player-" + i;
+  players.forEach((p, i) => {
+    const group = document.createElement("div");
+    group.className = "player-score-group player-" + i;
 
-  const btnAdd = document.createElement("button");
-  btnAdd.textContent = `+${currentValue} ${p}`;
-  btnAdd.className = "score-button add";
-  btnAdd.onclick = () => { scores[i] += currentValue; updateScoreboard(); closePopup(); };
+    const btnAdd = document.createElement("button");
+    btnAdd.textContent = `+${currentValue} ${p}`;
+    btnAdd.className = "score-button add";
+    btnAdd.onclick = () => { scores[i] += currentValue; updateScoreboard(); closePopup(); };
 
-  const btnSub = document.createElement("button");
-  btnSub.textContent = `-${currentValue} ${p}`;
-  btnSub.className = "score-button sub";
-  btnSub.onclick = () => { scores[i] -= currentValue; updateScoreboard(); closePopup(); };
+    const btnSub = document.createElement("button");
+    btnSub.textContent = `-${currentValue} ${p}`;
+    btnSub.className = "score-button sub";
+    btnSub.onclick = () => { scores[i] -= currentValue; updateScoreboard(); closePopup(); };
 
-  group.appendChild(btnAdd);
-  group.appendChild(btnSub);
-  sb.appendChild(group);
-});
+    group.appendChild(btnAdd);
+    group.appendChild(btnSub);
+    sb.appendChild(group);
+  });
 
   document.getElementById("popup").style.display = "block";
   cell.classList.add("used");
@@ -131,5 +139,9 @@ function toggleTVMode() {
 
 window.onload = () => {
   document.getElementById("loading").style.display = "none";
-  document.getElementById("year-toggle").addEventListener("change", loadGame);
+  document.getElementById("year-toggle").addEventListener("change", () => {
+    if (window.boardData) {
+      updateCategoryHeadersWithYear(window.boardData);
+    }
+  });
 };
