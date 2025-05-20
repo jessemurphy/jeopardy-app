@@ -2,22 +2,19 @@ from flask import Flask, jsonify, render_template, request
 import sqlite3
 import random
 import os
-import requests
+import gdown
 
 app = Flask(__name__)
 DB_PATH = "questions.db"
 
-# Optional: replace with your Google Drive file ID
 GOOGLE_DRIVE_FILE_ID = "1NCqMTSkql2lzxfgcx-tmRJouS_lkKe5j"
-GOOGLE_DRIVE_URL = f"https://drive.google.com/uc?export=download&id={GOOGLE_DRIVE_FILE_ID}"
+GOOGLE_DRIVE_URL = f"https://drive.google.com/uc?id={GOOGLE_DRIVE_FILE_ID}"
 
-# Download the DB if missing
+# Download the DB using gdown if missing
 def download_db():
     if not os.path.exists(DB_PATH):
-        print("Downloading questions.db from Google Drive...")
-        r = requests.get(GOOGLE_DRIVE_URL)
-        with open(DB_PATH, "wb") as f:
-            f.write(r.content)
+        print("Downloading questions.db using gdown...")
+        gdown.download(GOOGLE_DRIVE_URL, DB_PATH, quiet=False)
         print("Download complete.")
 
 @app.route('/')
