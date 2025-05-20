@@ -131,4 +131,5 @@ function toggleTVMode() {
 
 window.onload = () => {
   document.getElementById("loading").style.display = "none";
+  document.getElementById("year-toggle").addEventListener("change", loadGame);
 };
