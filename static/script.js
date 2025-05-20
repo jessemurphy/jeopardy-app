@@ -1,9 +1,31 @@
 let currentAnswer = "";
 let currentValue = 0;
-let currentIsDD = false;
 let currentYear = "";
-let score = 0;
+let currentIsDD = false;
 let popupVisible = false;
+let players = [];
+let scores = [];
+
+function startGame() {
+  const count = parseInt(document.getElementById("player-count").value);
+  players = Array.from({ length: count }, (_, i) => `P${i + 1}`);
+  scores = Array(count).fill(0);
+  document.getElementById("player-setup").style.display = "none";
+  document.getElementById("controls").style.display = "block";
+  updateScoreboard();
+  loadGame();
+}
+
+function updateScoreboard() {
+  const sb = document.getElementById("scoreboard");
+  sb.innerHTML = "";
+  players.forEach((p, i) => {
+    const div = document.createElement("div");
+    div.className = "player-row";
+    div.textContent = `${p}: $${scores[i]}`;
+    sb.appendChild(div);
+  });
+}
 
 async function loadGame() {
   if (popupVisible) return;
@@ -39,8 +61,6 @@ async function loadGame() {
       board.appendChild(row);
     }
 
-    score = 0;
-    updateScore();
     document.getElementById("loading").style.display = "none";
   } catch (err) {
     document.getElementById("loading").textContent = "Failed to load game. Please try again.";
@@ -51,16 +71,31 @@ async function loadGame() {
 function showClue(q, cell) {
   if (popupVisible || cell.classList.contains("used")) return;
   popupVisible = true;
-  document.getElementById("clue").textContent = q.clue;
-  document.getElementById("answer").textContent = "";
-  document.getElementById("special").textContent = q.daily_double ? "🎯 DAILY DOUBLE!" : "";
-  document.getElementById("clue-value").textContent = `For $${q.value}`;
   currentAnswer = q.answer;
   currentValue = q.value;
-  currentIsDD = q.daily_double;
   currentYear = q.year || "";
+  currentIsDD = q.daily_double;
+
+  document.getElementById("clue").textContent = q.clue;
+  document.getElementById("answer").textContent = "";
+  document.getElementById("special").textContent = currentIsDD ? "🎯 DAILY DOUBLE!" : "";
+  document.getElementById("clue-value").textContent = `For $${currentValue}`;
   const showYear = document.getElementById("year-toggle").checked;
   document.getElementById("year-label").textContent = showYear && currentYear ? `📅 From ${currentYear}` : "";
+
+  const sb = document.getElementById("score-buttons");
+  sb.innerHTML = "";
+  players.forEach((p, i) => {
+    const btnAdd = document.createElement("button");
+    btnAdd.textContent = `+${currentValue} ${p}`;
+    btnAdd.onclick = () => { scores[i] += currentValue; updateScoreboard(); closePopup(); };
+    const btnSub = document.createElement("button");
+    btnSub.textContent = `-${currentValue} ${p}`;
+    btnSub.onclick = () => { scores[i] -= currentValue; updateScoreboard(); closePopup(); };
+    sb.appendChild(btnAdd);
+    sb.appendChild(btnSub);
+  });
+
   document.getElementById("popup").style.display = "block";
   cell.classList.add("used");
   cell.textContent = "";
@@ -69,15 +104,6 @@ function showClue(q, cell) {
 
 function revealAnswer() {
   document.getElementById("answer").textContent = currentAnswer;
-}
-
-function adjustScore(correct) {
-  score += correct ? currentValue : -currentValue;
-  updateScore();
-}
-
-function updateScore() {
-  document.getElementById("score").textContent = score;
 }
 
 function closePopup() {
@@ -90,4 +116,6 @@ function toggleTVMode() {
   document.body.classList.toggle("tv-mode", isTV);
 }
 
-window.onload = loadGame;
+window.onload = () => {
+  document.getElementById("loading").style.display = "none";
+};

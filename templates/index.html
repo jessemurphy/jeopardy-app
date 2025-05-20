@@ -6,7 +6,7 @@
   <style>
     body { font-family: Arial; text-align: center; background-color: #001f3f; color: white; margin: 0; padding: 0; }
     select, button { font-size: 16px; margin: 10px; padding: 5px 10px; }
-    #controls { margin-top: 20px; }
+    #controls, #player-setup { margin-top: 20px; }
     #loading { font-size: 20px; color: yellow; margin-top: 10px; }
     table { margin: 1em auto; border-collapse: collapse; }
     th, td { border: 2px solid white; padding: 16px; width: 150px; height: 90px; background-color: #0074D9; cursor: pointer; }
@@ -18,14 +18,27 @@
       display: none; z-index: 10; max-width: 90%; width: 600px;
     }
     .popup button { margin-top: 10px; }
-    #scores { font-size: 18px; margin-bottom: 10px; }
     .tv-mode table { width: 95%; }
     .tv-mode th, .tv-mode td { width: auto; padding: 12px; height: 80px; font-size: 1.1em; }
+    #scoreboard { margin-top: 10px; font-size: 18px; }
+    .player-row { margin: 5px; }
   </style>
 </head>
 <body>
   <h1>Jeopardy Game</h1>
-  <div id="controls">
+
+  <div id="player-setup">
+    <label for="player-count">How many players?</label>
+    <select id="player-count">
+      <option value="1">1 Player</option>
+      <option value="2">2 Players</option>
+      <option value="3">3 Players</option>
+      <option value="4">4 Players</option>
+    </select>
+    <button onclick="startGame()">Start Game</button>
+  </div>
+
+  <div id="controls" style="display:none;">
     <label for="round-select">Select Round:</label>
     <select id="round-select">
       <option value="regular">Regular Jeopardy</option>
@@ -35,9 +48,11 @@
     <label><input type="checkbox" id="tv-toggle" onchange="toggleTVMode()"> TV Mode</label>
     <label><input type="checkbox" id="year-toggle"> Show Year</label>
   </div>
-  <div id="scores">Score: $<span id="score">0</span></div>
+
+  <div id="scoreboard"></div>
   <div id="loading">Loading game...</div>
   <table id="board"></table>
+
   <div class="popup" id="popup">
     <div id="special" style="color: red; font-weight: bold;"></div>
     <div id="clue-value" style="font-weight: bold;"></div>
@@ -45,12 +60,10 @@
     <div id="clue"></div>
     <button onclick="revealAnswer()">Show Answer</button>
     <div id="answer" style="margin-top:10px; font-weight: bold;"></div>
-    <div>
-      <button onclick="adjustScore(true)">Correct</button>
-      <button onclick="adjustScore(false)">Incorrect</button>
-    </div>
+    <div id="score-buttons" style="margin-top: 10px;"></div>
     <button onclick="closePopup()">Close</button>
   </div>
+
   <script src="/static/script.js"></script>
 </body>
 </html>
