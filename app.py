@@ -15,6 +15,10 @@ def download_db():
         gdown.download(GOOGLE_DRIVE_URL, DB_PATH, quiet=False)
         print("Download complete.")
 
+def extract_category(flds):
+    parts = flds.split('\x1f')
+    return parts[3].strip() if len(parts) > 3 else ""
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -30,36 +34,33 @@ def game():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
-    # Get categories with at least 5 entries
-    cursor.execute("""
-        SELECT category, COUNT(*) as count FROM (
-            SELECT TRIM(SUBSTR(flds, INSTR(flds, '\x1f', INSTR(flds, '\x1f', 1)+1)+1,
-                        INSTR(flds, '\x1f', INSTR(flds, '\x1f', INSTR(flds, '\x1f', 1)+1)+1)
-                        - INSTR(flds, '\x1f', INSTR(flds, '\x1f', 1)+1) - 1)) AS category
-            FROM notes
-        ) GROUP BY category HAVING count >= 5
-    """)
-    categories = [row[0] for row in cursor.fetchall()]
-    chosen_cats = random.sample(categories, 6)
+    # Load all flds values (only what's needed)
+    cursor.execute("SELECT flds FROM notes")
+    rows = cursor.fetchall()
+
+    # Organize rows by category
+    category_map = {}
+    for row in rows:
+        fields = row[0].split('\x1f')
+        if len(fields) >= 7:
+            cat = fields[3].strip()
+            category_map.setdefault(cat, []).append(fields)
+
+    # Filter for categories with enough data
+    valid_cats = [cat for cat, entries in category_map.items() if len(entries) >= 5]
+    chosen_cats = random.sample(valid_cats, 6)
 
     board = {}
     cells = []
 
     for cat in chosen_cats:
-        cursor.execute("""
-            SELECT flds FROM notes
-            WHERE flds LIKE ?
-        """, (f"%{cat}%",))
-        rows = cursor.fetchall()
-        random.shuffle(rows)
+        selected = random.sample(category_map[cat], 5)
         questions = []
-        for row in rows[:5]:
-            fields = row[0].split('\x1f')
-            if len(fields) >= 7:
-                clue = fields[5].strip()
-                answer = fields[6].strip()
-                value = (len(questions) + 1) * 100 * multiplier
-                questions.append({"value": value, "clue": clue, "answer": answer, "daily_double": False})
+        for i, flds in enumerate(selected):
+            clue = flds[5].strip()
+            answer = flds[6].strip()
+            value = (i + 1) * 100 * multiplier
+            questions.append({"value": value, "clue": clue, "answer": answer, "daily_double": False})
         board[cat] = questions
         cells.extend([(cat, i) for i in range(5)])
 
