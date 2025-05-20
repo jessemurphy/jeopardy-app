@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Jeopardy Game</title>
+  <style>
+    body { font-family: Arial; text-align: center; background-color: #001f3f; color: white; }
+    select { font-size: 16px; margin-top: 20px; padding: 5px; }
+    table { margin: 2em auto; border-collapse: collapse; }
+    th, td { border: 2px solid white; padding: 20px; width: 150px; height: 100px; background-color: #0074D9; cursor: pointer; }
+    th { background-color: #001f3f; }
+    .used { background-color: #111; cursor: default; }
+    .popup {
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      background: white; color: black; padding: 20px; border: 2px solid black;
+      display: none; z-index: 10;
+    }
+    .popup button { margin-top: 10px; }
+    #scores { margin-top: 10px; font-size: 18px; }
+  </style>
+</head>
+<body>
+  <h1>Jeopardy Game</h1>
+  <label for="round-select">Select Round:</label>
+  <select id="round-select" onchange="loadGame()">
+    <option value="regular">Regular Jeopardy</option>
+    <option value="double">Double Jeopardy</option>
+  </select>
+  <div id="scores">Score: $<span id="score">0</span></div>
+  <table id="board"></table>
+  <div class="popup" id="popup">
+    <div id="special" style="color: red; font-weight: bold;"></div>
+    <div id="clue"></div>
+    <button onclick="revealAnswer()">Show Answer</button>
+    <div id="answer" style="margin-top:10px; font-weight: bold;"></div>
+    <div>
+      <button onclick="adjustScore(true)">Correct</button>
+      <button onclick="adjustScore(false)">Incorrect</button>
+    </div>
+    <button onclick="closePopup()">Close</button>
+  </div>
+  <script src="/static/script.js"></script>
+</body>
+</html>
