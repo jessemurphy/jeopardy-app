@@ -3,6 +3,7 @@ import sqlite3
 import random
 import os
 import gdown
+import html
 
 app = Flask(__name__)
 DB_PATH = "questions.db"
@@ -22,14 +23,12 @@ def index():
 @app.route('/game')
 def game():
     download_db()
-
     round_type = request.args.get('round', 'regular')
     multiplier = 1 if round_type == 'regular' else 2
     num_daily_doubles = 1 if round_type == 'regular' else 2
 
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-
     cursor.execute("SELECT flds FROM notes")
     rows = cursor.fetchall()
 
@@ -49,23 +48,52 @@ def game():
     for cat in chosen_cats:
         selected = random.sample(category_map[cat], 5)
         try:
-            year = selected[0][7].strip().split("-")[0]  # Use air date year from first clue
+            year = selected[0][7].strip().split("-")[0]
         except:
             year = ""
         questions = []
         for i, flds in enumerate(selected):
-            clue = flds[5].strip()
-            answer = flds[6].strip()
+            clue = html.unescape(flds[5].strip().replace("\\", ""))
+            answer = html.unescape(flds[6].strip().replace("\\", ""))
             value = (i + 1) * 100 * multiplier
-            questions.append({"value": value, "clue": clue, "answer": answer, "daily_double": False, "year": year})
+            questions.append({
+                "value": value,
+                "clue": clue,
+                "answer": answer,
+                "daily_double": False,
+                "year": year
+            })
         board[cat] = questions
         cells.extend([(cat, i) for i in range(5)])
 
     dd_positions = random.sample(cells, num_daily_doubles)
     for cat, idx in dd_positions:
-        board[cat][idx]['daily_double'] = True
+        board[cat][idx]["daily_double"] = True
 
     return jsonify(board)
+
+@app.route('/final')
+def final_jeopardy():
+    download_db()
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("SELECT flds FROM notes")
+    rows = cursor.fetchall()
+
+    final_clues = []
+    for row in rows:
+        fields = row[0].split('\x1f')
+        if len(fields) >= 8 and "final jeopardy" in fields[3].lower():
+            final_clues.append({
+                "clue": html.unescape(fields[5].strip().replace("\\", "")),
+                "answer": html.unescape(fields[6].strip().replace("\\", "")),
+                "year": fields[7].strip().split("-")[0] if "-" in fields[7] else ""
+            })
+
+    if final_clues:
+        return jsonify(random.choice(final_clues))
+    else:
+        return jsonify({"clue": "No Final Jeopardy question found.", "answer": "", "year": ""})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
