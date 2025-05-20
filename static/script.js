@@ -3,6 +3,8 @@ let currentValue = 0;
 let currentYear = "";
 let currentIsDD = false;
 let popupVisible = false;
+let phase = 1;
+let cluesUsed = 0;
 let players = [];
 let scores = [];
 
@@ -12,6 +14,7 @@ function startGame() {
   scores = Array(count).fill(0);
   document.getElementById("player-setup").style.display = "none";
   document.getElementById("controls").style.display = "block";
+  document.getElementById("round-select").style.display = "none";
   updateScoreboard();
   loadGame();
 }
@@ -30,7 +33,7 @@ function updateScoreboard() {
 async function loadGame() {
   if (popupVisible) return;
   document.getElementById("loading").style.display = "block";
-  const round = document.getElementById("round-select").value;
+  const round = phase === 2 ? "double" : "regular";
   try {
     const res = await fetch(`/game?round=${round}`);
     if (!res.ok) throw new Error("Failed to load questions.");
@@ -64,37 +67,28 @@ async function loadGame() {
     }
 
     document.getElementById("loading").style.display = "none";
+    document.getElementById("clue-count").textContent = cluesUsed;
+    document.getElementById("phase-indicator").textContent = phase;
   } catch (err) {
     document.getElementById("loading").textContent = "Failed to load game. Please try again.";
     console.error(err);
   }
 }
 
-function updateCategoryHeadersWithYear(data) {
-  const headers = document.querySelectorAll("table tr:first-child th");
-  const showYear = document.getElementById("year-toggle").checked;
-  const categories = Object.keys(data);
-
-  headers.forEach((th, i) => {
-    const cat = categories[i];
-    const year = showYear && data[cat][0].year ? ` (${data[cat][0].year})` : "";
-    th.textContent = cat + year;
-  });
-}
-
 function showClue(q, cell) {
   if (popupVisible || cell.classList.contains("used")) return;
   popupVisible = true;
-  currentAnswer = q.answer;
+  currentAnswer = q.answer.replaceAll("\"", """);
   currentValue = q.value;
   currentYear = q.year || "";
   currentIsDD = q.daily_double;
 
-  document.getElementById("clue").textContent = q.clue;
+  document.getElementById("clue").textContent = q.clue.replaceAll("\"", """);
   document.getElementById("answer").textContent = "";
   document.getElementById("special").textContent = currentIsDD ? "🎯 DAILY DOUBLE!" : "";
   document.getElementById("clue-value").textContent = `For $${currentValue}`;
-  document.getElementById("year-label").textContent = "";
+  const showYear = document.getElementById("year-toggle").checked;
+  document.getElementById("year-label").textContent = showYear && currentYear ? `📅 From ${currentYear}` : "";
 
   const sb = document.getElementById("score-buttons");
   sb.innerHTML = "";
@@ -130,6 +124,18 @@ function revealAnswer() {
 function closePopup() {
   popupVisible = false;
   document.getElementById("popup").style.display = "none";
+  cluesUsed++;
+  document.getElementById("clue-count").textContent = cluesUsed;
+  if (cluesUsed >= 30 && phase === 1) {
+    setTimeout(() => {
+      alert("Now entering Double Jeopardy!");
+      phase = 2;
+      cluesUsed = 0;
+      document.getElementById("phase-indicator").textContent = phase;
+      document.getElementById("clue-count").textContent = cluesUsed;
+      loadGame();
+    }, 300);
+  }
 }
 
 function toggleTVMode() {
@@ -138,33 +144,41 @@ function toggleTVMode() {
 }
 
 window.onload = () => {
-document.getElementById("player-count").addEventListener("change", () => {
-  const count = parseInt(document.getElementById("player-count").value);
-  const setup = document.getElementById("player-setup");
-  let inputs = document.getElementById("name-inputs");
-  if (!inputs) {
-    inputs = document.createElement("div");
-    inputs.id = "name-inputs";
-    setup.appendChild(inputs);
-  }
-  inputs.innerHTML = "";
-  for (let i = 0; i < count; i++) {
-    const label = document.createElement("label");
-    label.textContent = `Player ${i + 1}: `;
-    const input = document.createElement("input");
-    input.type = "text";
-    input.id = `player-name-${i}`;
-    input.placeholder = `P${i + 1}`;
-    input.style.margin = "5px";
-    inputs.appendChild(label);
-    inputs.appendChild(input);
-    inputs.appendChild(document.createElement("br"));
-  }
-});
   document.getElementById("loading").style.display = "none";
   document.getElementById("year-toggle").addEventListener("change", () => {
     if (window.boardData) {
-      updateCategoryHeadersWithYear(window.boardData);
+      const headers = document.querySelectorAll("table tr:first-child th");
+      const showYear = document.getElementById("year-toggle").checked;
+      const categories = Object.keys(window.boardData);
+      headers.forEach((th, i) => {
+        const cat = categories[i];
+        const year = showYear && window.boardData[cat][0].year ? ` (${window.boardData[cat][0].year})` : "";
+        th.textContent = cat + year;
+      });
+    }
+  });
+
+  document.getElementById("player-count").addEventListener("change", () => {
+    const count = parseInt(document.getElementById("player-count").value);
+    const setup = document.getElementById("player-setup");
+    let inputs = document.getElementById("name-inputs");
+    if (!inputs) {
+      inputs = document.createElement("div");
+      inputs.id = "name-inputs";
+      setup.appendChild(inputs);
+    }
+    inputs.innerHTML = "";
+    for (let i = 0; i < count; i++) {
+      const label = document.createElement("label");
+      label.textContent = `Player ${i + 1}: `;
+      const input = document.createElement("input");
+      input.type = "text";
+      input.id = `player-name-${i}`;
+      input.placeholder = `P${i + 1}`;
+      input.style.margin = "5px";
+      inputs.appendChild(label);
+      inputs.appendChild(input);
+      inputs.appendChild(document.createElement("br"));
     }
   });
 };
