@@ -4,61 +4,124 @@
   <meta charset="UTF-8">
   <title>Jeopardy Game</title>
   <style>
-    body { font-family: Arial; text-align: center; background-color: #001f3f; color: white; margin: 0; padding: 0; }
-    select, button { font-size: 16px; margin: 10px; padding: 5px 10px; }
-    #controls, #player-setup { margin-top: 20px; }
-    #loading { font-size: 20px; color: yellow; margin-top: 10px; }
-      #scoreboard {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    flex-wrap: wrap;
-        #score-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  justify-content: center;
-  margin-top: 10px;
-}
-
-.player-score-group {
-  display: flex;
-  flex-direction: row;
-  gap: 4px;
-}
-
-/* Distinct colors per player */
-.player-0 button { background-color: #0074D9; color: white; }
-.player-1 button { background-color: #2ECC40; color: white; }
-.player-2 button { background-color: #FF851B; color: white; }
-.player-3 button { background-color: #B10DC9; color: white; }
-
-.score-button {
-  padding: 6px 12px;
-  font-weight: bold;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-  }
-
-  .player-row {
-    font-weight: bold;
-  }
-    table { margin: 1em auto; border-collapse: collapse; }
-    th, td { border: 2px solid white; padding: 16px; width: 150px; height: 90px; background-color: #0074D9; cursor: pointer; }
-    th { background-color: #001f3f; height: 50px; }
-    .used { background-color: #111; cursor: default; }
-    .popup {
-      position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      background: white; color: black; padding: 20px; border: 2px solid black;
-      display: none; z-index: 10; max-width: 90%; width: 600px;
+    body {
+      font-family: Arial;
+      text-align: center;
+      background-color: #001f3f;
+      color: white;
+      margin: 0;
+      padding: 0;
     }
-    .popup button { margin-top: 10px; }
-    .tv-mode table { width: 95%; }
-    .tv-mode th, .tv-mode td { width: auto; padding: 12px; height: 80px; font-size: 1.1em; }
-    #scoreboard { margin-top: 10px; font-size: 18px; }
-    .player-row { margin: 5px; }
+
+    select, button {
+      font-size: 16px;
+      margin: 10px;
+      padding: 5px 10px;
+    }
+
+    #controls, #player-setup {
+      margin-top: 20px;
+    }
+
+    #loading {
+      font-size: 20px;
+      color: yellow;
+      margin-top: 10px;
+    }
+
+    #scoreboard {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+      font-size: 18px;
+    }
+
+    #score-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .player-score-group {
+      display: flex;
+      flex-direction: row;
+      gap: 4px;
+    }
+
+    .player-0 .score-button { background-color: #0074D9; color: white; }
+    .player-1 .score-button { background-color: #2ECC40; color: white; }
+    .player-2 .score-button { background-color: #FF851B; color: white; }
+    .player-3 .score-button { background-color: #B10DC9; color: white; }
+
+    .score-button {
+      padding: 6px 12px;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .player-row {
+      font-weight: bold;
+    }
+
+    table {
+      margin: 1em auto;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      border: 2px solid white;
+      padding: 16px;
+      width: 150px;
+      height: 90px;
+      background-color: #0074D9;
+      cursor: pointer;
+    }
+
+    th {
+      background-color: #001f3f;
+      height: 50px;
+    }
+
+    .used {
+      background-color: #111;
+      cursor: default;
+    }
+
+    .popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      color: black;
+      padding: 20px;
+      border: 2px solid black;
+      display: none;
+      z-index: 10;
+      max-width: 90%;
+      width: 600px;
+    }
+
+    .popup button {
+      margin-top: 10px;
+    }
+
+    .tv-mode table {
+      width: 95%;
+    }
+
+    .tv-mode th, .tv-mode td {
+      width: auto;
+      padding: 12px;
+      height: 80px;
+      font-size: 1.1em;
+    }
   </style>
 </head>
 <body>
