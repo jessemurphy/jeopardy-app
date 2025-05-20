@@ -3,6 +3,7 @@ import sqlite3
 import random
 import os
 import gdown
+import re
 
 app = Flask(__name__)
 DB_PATH = "questions.db"
@@ -14,6 +15,15 @@ def download_db():
         print("Downloading questions.db using gdown...")
         gdown.download(GOOGLE_DRIVE_URL, DB_PATH, quiet=False)
         print("Download complete.")
+
+def extract_year(fields):
+    joined = " ".join(fields)
+    match = re.search(r'(19|20)\d{2}', joined)
+    if match:
+        year = int(match.group())
+        if 1984 <= year <= 2100:
+            return str(year)
+    return ""
 
 @app.route('/')
 def index():
@@ -45,20 +55,6 @@ def game():
 
     board = {}
     cells = []
-
-    
-def extract_year(fields):
-    joined = " ".join(fields)
-    match = re.search(r'(19|20)\d{2}', joined)
-    if match:
-        year = int(match.group())
-        if 1984 <= year <= 2100:
-            return str(year)
-    return ""
-
-        joined = " ".join(fields)
-        match = re.search(r'(19|20)\d{2}', joined)
-        return match.group() if match else ""
 
     for cat in chosen_cats:
         selected = random.sample(category_map[cat], 5)
