@@ -85,16 +85,24 @@ function showClue(q, cell) {
 
   const sb = document.getElementById("score-buttons");
   sb.innerHTML = "";
-  players.forEach((p, i) => {
-    const btnAdd = document.createElement("button");
-    btnAdd.textContent = `+${currentValue} ${p}`;
-    btnAdd.onclick = () => { scores[i] += currentValue; updateScoreboard(); closePopup(); };
-    const btnSub = document.createElement("button");
-    btnSub.textContent = `-${currentValue} ${p}`;
-    btnSub.onclick = () => { scores[i] -= currentValue; updateScoreboard(); closePopup(); };
-    sb.appendChild(btnAdd);
-    sb.appendChild(btnSub);
-  });
+players.forEach((p, i) => {
+  const group = document.createElement("div");
+  group.className = "player-score-group player-" + i;
+
+  const btnAdd = document.createElement("button");
+  btnAdd.textContent = `+${currentValue} ${p}`;
+  btnAdd.className = "score-button add";
+  btnAdd.onclick = () => { scores[i] += currentValue; updateScoreboard(); closePopup(); };
+
+  const btnSub = document.createElement("button");
+  btnSub.textContent = `-${currentValue} ${p}`;
+  btnSub.className = "score-button sub";
+  btnSub.onclick = () => { scores[i] -= currentValue; updateScoreboard(); closePopup(); };
+
+  group.appendChild(btnAdd);
+  group.appendChild(btnSub);
+  sb.appendChild(group);
+});
 
   document.getElementById("popup").style.display = "block";
   cell.classList.add("used");
