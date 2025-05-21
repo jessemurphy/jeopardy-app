@@ -182,3 +182,11 @@ window.onload = () => {
     }
   });
 };
+document.addEventListener("keydown", function(event) {
+  if (event.key === "Escape") {
+    const popup = document.getElementById("popup");
+    if (popup && popup.style.display === "block") {
+      popup.style.display = "none";
+    }
+  }
+});
