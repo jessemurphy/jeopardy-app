@@ -184,9 +184,7 @@ window.onload = () => {
   });
 };
 document.addEventListener("keydown", function(event) {
-  if (event.key === "Escape") {
     const popup = document.getElementById("popup");
-    if (popup && popup.style.display === "block") {
       popup.style.display = "none";
     }
   }
@@ -220,4 +218,11 @@ function finalJeopardy() {
 document.addEventListener("DOMContentLoaded", () => {
   const finalBtn = document.getElementById("final-btn");
   if (finalBtn) finalBtn.addEventListener("click", finalJeopardy);
+});
+
+document.addEventListener("keydown", function(event) {
+  if (event.key === "Escape") {
+    const popup = document.getElementById("popup");
+    if (popup) popup.style.display = "none";
+  }
 });
