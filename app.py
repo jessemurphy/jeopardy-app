@@ -11,10 +11,13 @@ GOOGLE_DRIVE_FILE_ID = "1NCqMTSkql2lzxfgcx-tmRJouS_lkKe5j"
 GOOGLE_DRIVE_URL = f"https://drive.google.com/uc?id={GOOGLE_DRIVE_FILE_ID}"
 
 def download_db():
+    print("Checking for questions.db...")
     if not os.path.exists(DB_PATH):
-        print("Downloading questions.db using gdown...")
+        print("Downloading questions.db from Google Drive...")
         gdown.download(GOOGLE_DRIVE_URL, DB_PATH, quiet=False)
         print("Download complete.")
+    else:
+        print("questions.db already exists.")
 
 @app.route('/')
 def index():
@@ -22,7 +25,9 @@ def index():
 
 @app.route('/game')
 def game():
+    print("Game route hit!")
     download_db()
+
     round_type = request.args.get('round', 'regular')
     multiplier = 1 if round_type == 'regular' else 2
     num_daily_doubles = 1 if round_type == 'regular' else 2
@@ -53,8 +58,8 @@ def game():
             year = ""
         questions = []
         for i, flds in enumerate(selected):
-            clue = html.unescape(flds[5].strip().replace("\\", ""))
-            answer = html.unescape(flds[6].strip().replace("\\", ""))
+            clue = html.unescape(flds[5].strip().replace("\\", "").replace('\"', '"'))
+            answer = html.unescape(flds[6].strip().replace("\\", "").replace('\"', '"'))
             value = (i + 1) * 100 * multiplier
             questions.append({
                 "value": value,
@@ -74,7 +79,9 @@ def game():
 
 @app.route('/final')
 def final_jeopardy():
+    print("Final Jeopardy route hit!")
     download_db()
+
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     cursor.execute("SELECT flds FROM notes")
@@ -85,8 +92,8 @@ def final_jeopardy():
         fields = row[0].split('\x1f')
         if len(fields) >= 8 and "final jeopardy" in fields[3].lower():
             final_clues.append({
-                "clue": html.unescape(fields[5].strip().replace("\\", "")),
-                "answer": html.unescape(fields[6].strip().replace("\\", "")),
+                "clue": html.unescape(fields[5].strip().replace("\\", "").replace('\"', '"')),
+                "answer": html.unescape(fields[6].strip().replace("\\", "").replace('\"', '"')),
                 "year": fields[7].strip().split("-")[0] if "-" in fields[7] else ""
             })
 
