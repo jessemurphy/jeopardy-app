@@ -78,12 +78,12 @@ async function loadGame() {
 function showClue(q, cell) {
   if (popupVisible || cell.classList.contains("used")) return;
   popupVisible = true;
-  currentAnswer = q.answer.replaceAll('\"', '"'), """);
+  currentAnswer = q.answer.replaceAll('\\"', '"');
   currentValue = q.value;
   currentYear = q.year || "";
   currentIsDD = q.daily_double;
 
-  document.getElementById("clue").textContent = q.clue.replaceAll('\"', '"'), """);
+  document.getElementById("clue").textContent = q.clue.replaceAll('\\"', '"');
   document.getElementById("answer").textContent = "";
   document.getElementById("special").textContent = currentIsDD ? "🎯 DAILY DOUBLE!" : "";
   document.getElementById("clue-value").textContent = `For $${currentValue}`;
