@@ -125,6 +125,7 @@ function closePopup() {
   popupVisible = false;
   document.getElementById("popup").style.display = "none";
   cluesUsed++;
+  if (cluesUsed === 60) finalJeopardy();
   document.getElementById("clue-count").textContent = cluesUsed;
   if (cluesUsed >= 30 && phase === 1) {
     setTimeout(() => {
@@ -189,4 +190,34 @@ document.addEventListener("keydown", function(event) {
       popup.style.display = "none";
     }
   }
+});
+
+function finalJeopardy() {
+  const clue = prompt("Final Jeopardy Clue:", "What is the capital of France?");
+  const correctAnswer = "Paris";
+  const wagers = [];
+  const answers = [];
+  players.forEach((p, i) => {
+    let maxWager = scores[i];
+    let wager = parseInt(prompt(`${p}, enter your Final Jeopardy wager (max ${maxWager}):`, Math.min(1000, maxWager)));
+    if (isNaN(wager) || wager < 0 || wager > maxWager) wager = 0;
+    wagers.push(wager);
+    let answer = prompt(`${p}, enter your Final Jeopardy answer:`);
+    answers.push(answer);
+  });
+  let summary = "Final Jeopardy\nClue: " + clue + "\nCorrect Answer: " + correctAnswer + "\n\n";
+  players.forEach((p, i) => {
+    let isCorrect = answers[i].trim().toLowerCase() === correctAnswer.toLowerCase();
+    scores[i] += isCorrect ? wagers[i] : -wagers[i];
+    summary += p + " wagered " + wagers[i] + ", answered '" + answers[i] + "', and was " + (isCorrect ? "correct" : "incorrect") + ".\n";
+  });
+  updateScoreboard();
+  alert(summary);
+  const winnerIndex = scores.indexOf(Math.max(...scores));
+  alert(`🏆 ${players[winnerIndex]} wins with ${scores[winnerIndex]} points!`);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const finalBtn = document.getElementById("final-btn");
+  if (finalBtn) finalBtn.addEventListener("click", finalJeopardy);
 });
