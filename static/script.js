@@ -184,9 +184,9 @@ window.onload = () => {
   });
 };
 document.addEventListener("keydown", function(event) {
+  if (event.key === "Escape") {
     const popup = document.getElementById("popup");
-      popup.style.display = "none";
-    }
+    if (popup) popup.style.display = "none";
   }
 });
 
@@ -197,12 +197,10 @@ function finalJeopardy() {
   const answers = [];
   players.forEach((p, i) => {
     let maxWager = scores[i];
-    let wagerPrompt = p + ", enter your Final Jeopardy wager (max " + maxWager + "):";
-    let wager = parseInt(prompt(wagerPrompt, Math.min(1000, maxWager)));
+    let wager = parseInt(prompt(`${p}, enter your Final Jeopardy wager (max ${maxWager}):`, Math.min(1000, maxWager)));
     if (isNaN(wager) || wager < 0 || wager > maxWager) wager = 0;
     wagers.push(wager);
-    let answerPrompt = p + ", enter your Final Jeopardy answer:";
-    let answer = prompt(answerPrompt);
+    let answer = prompt(`${p}, enter your Final Jeopardy answer:`);
     answers.push(answer);
   });
   let summary = "Final Jeopardy\nClue: " + clue + "\nCorrect Answer: " + correctAnswer + "\n\n";
