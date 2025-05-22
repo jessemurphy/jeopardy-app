@@ -125,7 +125,7 @@ function closePopup() {
   popupVisible = false;
   document.getElementById("popup").style.display = "none";
   cluesUsed++;
-  if (cluesUsed === 60) finalJeopardy();
+  if (cluesUsed === 30 && phase === 2) finalJeopardy();
   document.getElementById("clue-count").textContent = cluesUsed;
   if (cluesUsed >= 30 && phase === 1) {
     setTimeout(() => {
