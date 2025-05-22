@@ -99,12 +99,20 @@ function showClue(q, cell) {
     const btnAdd = document.createElement("button");
     btnAdd.textContent = `+${currentValue} ${p}`;
     btnAdd.className = "score-button add";
-    btnAdd.onclick = () => { scores[i] += currentValue; updateScoreboard(); closePopup(); };
+  btnAdd.onclick = () => {
+    scores[i] += currentValue;
+    updateScoreboard();
+    if (players.length === 1) closePopup();
+  };
 
     const btnSub = document.createElement("button");
     btnSub.textContent = `-${currentValue} ${p}`;
     btnSub.className = "score-button sub";
-    btnSub.onclick = () => { scores[i] -= currentValue; updateScoreboard(); closePopup(); };
+  btnSub.onclick = () => {
+    scores[i] -= currentValue;
+    updateScoreboard();
+    if (players.length === 1) closePopup();
+  };
 
     group.appendChild(btnAdd);
     group.appendChild(btnSub);
@@ -184,7 +192,7 @@ window.onload = () => {
   });
 };
 document.addEventListener("keydown", function(event) {
-  if (event.key === "Escape") {
+  if (event.key === "Escape") closePopup();
     const popup = document.getElementById("popup");
     if (popup) popup.style.display = "none";
   }
@@ -223,14 +231,14 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 document.addEventListener("keydown", function(event) {
-  if (event.key === "Escape") {
+  if (event.key === "Escape") closePopup();
     const popup = document.getElementById("popup");
     if (popup) popup.style.display = "none";
   }
 });
 
 document.addEventListener("keydown", function(event) {
-  if (event.key === "Escape") {
+  if (event.key === "Escape") closePopup();
     closePopup();
   }
 });
