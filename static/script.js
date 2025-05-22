@@ -191,12 +191,6 @@ window.onload = () => {
     }
   });
 };
-document.addEventListener("keydown", function(event) {
-  if (event.key === "Escape") closePopup();
-    const popup = document.getElementById("popup");
-    if (popup) popup.style.display = "none";
-  }
-});
 
 function finalJeopardy() {
   const clue = prompt("Final Jeopardy Clue:", "What is the capital of France?");
