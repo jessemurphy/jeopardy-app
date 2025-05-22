@@ -197,10 +197,12 @@ function finalJeopardy() {
   const answers = [];
   players.forEach((p, i) => {
     let maxWager = scores[i];
-    let wager = parseInt(prompt(`${p}, enter your Final Jeopardy wager (max ${maxWager}):`, Math.min(1000, maxWager)));
+    let wagerPrompt = p + ", enter your Final Jeopardy wager (max " + maxWager + "):";
+    let wager = parseInt(prompt(wagerPrompt, Math.min(1000, maxWager)));
     if (isNaN(wager) || wager < 0 || wager > maxWager) wager = 0;
     wagers.push(wager);
-    let answer = prompt(`${p}, enter your Final Jeopardy answer:`);
+    let answerPrompt = p + ", enter your Final Jeopardy answer:";
+    let answer = prompt(answerPrompt);
     answers.push(answer);
   });
   let summary = "Final Jeopardy\nClue: " + clue + "\nCorrect Answer: " + correctAnswer + "\n\n";
