@@ -184,6 +184,11 @@ window.onload = () => {
   });
 };
 document.addEventListener("keydown", function(event) {
+  if (event.key === "Escape") {
+    const popup = document.getElementById("popup");
+    if (popup) popup.style.display = "none";
+  }
+});
 
 function finalJeopardy() {
   const clue = prompt("Final Jeopardy Clue:", "What is the capital of France?");
@@ -192,10 +197,12 @@ function finalJeopardy() {
   const answers = [];
   players.forEach((p, i) => {
     let maxWager = scores[i];
-    let wager = parseInt(prompt(`${p}, enter your Final Jeopardy wager (max ${maxWager}):`, Math.min(1000, maxWager)));
+    let wagerPrompt = p + ", enter your Final Jeopardy wager (max " + maxWager + "):";
+    let wager = parseInt(prompt(wagerPrompt, Math.min(1000, maxWager)));
     if (isNaN(wager) || wager < 0 || wager > maxWager) wager = 0;
     wagers.push(wager);
-    let answer = prompt(`${p}, enter your Final Jeopardy answer:`);
+    let answerPrompt = p + ", enter your Final Jeopardy answer:";
+    let answer = prompt(answerPrompt);
     answers.push(answer);
   });
   let summary = "Final Jeopardy\nClue: " + clue + "\nCorrect Answer: " + correctAnswer + "\n\n";
@@ -207,7 +214,7 @@ function finalJeopardy() {
   updateScoreboard();
   alert(summary);
   const winnerIndex = scores.indexOf(Math.max(...scores));
-  alert(`🏆 ${players[winnerIndex]} wins with ${scores[winnerIndex]} points!`);
+  alert("🏆 " + players[winnerIndex] + " wins with " + scores[winnerIndex] + " points!");
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -216,7 +223,8 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 document.addEventListener("keydown", function(event) {
-
-document.addEventListener("keydown", function(event) {
-  if (event.key === "Escape") closePopup();
+  if (event.key === "Escape") {
+    const popup = document.getElementById("popup");
+    if (popup) popup.style.display = "none";
+  }
 });
