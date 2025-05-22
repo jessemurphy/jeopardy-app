@@ -1,3 +1,32 @@
+const finalJeopardyClues = [
+  { category: 'THIS IS JEOPARDY!', clue: 'On this late night host\'s list of 10 Things Communists Are No Damn Good At, #1 was "Guessing Final Jeopardy\\"', answer: 'David Letterman' },
+  { category: '13-LETTER WORDS', clue: 'Word meaning "immeasurably small"; its first 8 letters are a word meaning "immeasurably great\\"', answer: 'infinitesimal' },
+  { category: 'COMMON BONDS', clue: 'Peeling onions, watching Mel Gibson\'s film "Forever Young", missing Final Jeopardy!', answer: 'things that make you cry' },
+  { category: 'JEOPARDY! 101', clue: "Including Final Jeopardy!, it's the total number of possible questions in one game", answer: '61' },
+  { category: '\\"FI\\"', clue: 'It\'s the last "Jeopardy!" in the game', answer: 'Final Jeopardy' },
+  { category: 'VIEWER MAIL', clue: 'Penitence was demanded when a Final Jeopardy! called Ash Wednesday this type of religious "day\\"', answer: 'Holy day' },
+  { category: 'PEOPLE', clue: 'He said, "I... really never considered myself a TV star.  I always thought I was a neighbor who just came in for a visit\\"', answer: "Fred Rogers (of Mister Rogers' Neighborhood)" },
+  { category: '19th CENTURY ART & HISTORY', clue: 'The red sky in Munch\'s "The Scream" may be from the debris in the Oslo air from this volcano half a world away', answer: 'Krakatoa' },
+  { category: 'LITERARY INFLUENCES', clue: 'A 1919 Shaw play subtitled "A Fantasia in the Russian Manner..." is an homage to this playwright who died in 1904', answer: 'Anton Chekhov' },
+  { category: 'SPANISH VERBS', clue: "Escribir means to do this; you'll have to do it during Final Jeopardy!", answer: 'to write' },
+  { category: 'JEOPARDY PLATFORMS', clue: 'A train platform spells final jeopardy for this Tolstoy title heroine', answer: 'Anna Karenina' },
+  { category: 'TRUE DAILY DOUBLES', clue: 'July 4, 1826: These 2 former presidents face final jeopardy', answer: 'Jefferson & John Adams' },
+  { category: "HERE'S FINAL JEOPARDY", clue: "On April 21, 1910 reports of this author's death were not greatly exaggerated", answer: 'Mark Twain' },
+  { category: "HERE'S FINAL JEOPARDY", clue: 'In London on August 13, 1910, it was good night, this nurse', answer: 'Florence Nightingale' },
+  { category: "HERE'S FINAL JEOPARDY", clue: 'This 83-year-old revolutionary war hero took his last ride on May 10, 1818', answer: '(Paul) Revere' },
+  { category: "HERE'S FINAL JEOPARDY", clue: "He's dead Jim; remember the Alamo & know this Kentuckian didn't make it out of the landmark on March 6, 1836", answer: 'James Bowie' },
+  { category: "HERE'S FINAL JEOPARDY", clue: 'The last page of "The Autobiography of" this companion of Gertrude Stein was turned on March 7, 1967', answer: 'Alice B. Toklas' },
+  { category: 'BRITISH NAMES', clue: "The last name of this 17th c. baronet who held many offices is synonymous with the govt. & especially the PM's residence", answer: '(Sir George) Downing' },
+  { category: 'HISTORICAL GEOGRAPHY', clue: 'Most of the land fighting in the first Punic war between Rome & Carthage was on this island', answer: 'Sicily' },
+  { category: 'FINAL JEOPARDY', clue: "Each side's lawyer makes this argument as a final statement to a jury", answer: 'closing' },
+  { category: 'FINAL JEOPARDY', clue: 'This Belgian locale can mean a downfall, especially from the French perspective', answer: 'Waterloo' },
+  { category: 'FINAL JEOPARDY', clue: 'This single-digit bankruptcy is also known as "liquidation bankruptcy\\"', answer: 'Chapter 7' },
+  { category: 'FINAL JEOPARDY', clue: 'From the Latin for "nothing" comes this word meaning to reduce something to nothing', answer: 'annihilate' },
+  { category: 'FINAL JEOPARDY', clue: 'This French word means the final resolution of the plot lines of a drama', answer: 'denouement' }
+];
+];
+
+
 let currentAnswer = "";
 let currentValue = 0;
 let currentYear = "";
@@ -100,6 +129,19 @@ function showClue(q, cell) {
     btnAdd.textContent = `+${currentValue} ${p}`;
     btnAdd.className = "score-button add";
   btnAdd.onclick = () => {
+
+    scores[i] += currentValue;
+
+    updateScoreboard();
+
+    btnAdd.disabled = true;
+
+    btnSub.disabled = true;
+
+    if (players.length === 1) closePopup();
+
+  };
+
     scores[i] += currentValue;
     updateScoreboard();
     if (players.length === 1) closePopup();
@@ -109,6 +151,19 @@ function showClue(q, cell) {
     btnSub.textContent = `-${currentValue} ${p}`;
     btnSub.className = "score-button sub";
   btnSub.onclick = () => {
+
+    scores[i] -= currentValue;
+
+    updateScoreboard();
+
+    btnAdd.disabled = true;
+
+    btnSub.disabled = true;
+
+    if (players.length === 1) closePopup();
+
+  };
+
     scores[i] -= currentValue;
     updateScoreboard();
     if (players.length === 1) closePopup();
@@ -193,20 +248,59 @@ window.onload = () => {
 };
 
 function finalJeopardy() {
-  const clue = prompt("Final Jeopardy Clue:", "What is the capital of France?");
-  const correctAnswer = "Paris";
+
+  const clueObj = finalJeopardyClues[Math.floor(Math.random() * finalJeopardyClues.length)];
+
+  const clue = clueObj.clue;
+
+  const correctAnswer = clueObj.answer;
+
   const wagers = [];
+
   const answers = [];
+
   players.forEach((p, i) => {
+
     let maxWager = scores[i];
+
     let wagerPrompt = p + ", enter your Final Jeopardy wager (max " + maxWager + "):";
+
     let wager = parseInt(prompt(wagerPrompt, Math.min(1000, maxWager)));
+
     if (isNaN(wager) || wager < 0 || wager > maxWager) wager = 0;
+
     wagers.push(wager);
+
     let answerPrompt = p + ", enter your Final Jeopardy answer:";
+
     let answer = prompt(answerPrompt);
+
     answers.push(answer);
+
   });
+
+  let summary = "Final Jeopardy\nClue: " + clue + "\nCorrect Answer: " + correctAnswer + "\n\n";
+
+  players.forEach((p, i) => {
+
+    let isCorrect = answers[i].trim().toLowerCase() === correctAnswer.toLowerCase();
+
+    scores[i] += isCorrect ? wagers[i] : -wagers[i];
+
+    summary += p + " wagered " + wagers[i] + ", answered '" + answers[i] + "', and was " + (isCorrect ? "correct" : "incorrect") + ".\n";
+
+  });
+
+  updateScoreboard();
+
+  alert(summary);
+
+  const winnerIndex = scores.indexOf(Math.max(...scores));
+
+  alert("🏆 " + players[winnerIndex] + " wins with " + scores[winnerIndex] + " points!");
+
+}
+
   let summary = "Final Jeopardy\nClue: " + clue + "\nCorrect Answer: " + correctAnswer + "\n\n";
   players.forEach((p, i) => {
     let isCorrect = answers[i].trim().toLowerCase() === correctAnswer.toLowerCase();
