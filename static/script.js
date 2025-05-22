@@ -228,3 +228,9 @@ document.addEventListener("keydown", function(event) {
     if (popup) popup.style.display = "none";
   }
 });
+
+document.addEventListener("keydown", function(event) {
+  if (event.key === "Escape") {
+    closePopup();
+  }
+});
