@@ -24,7 +24,6 @@ const finalJeopardyClues = [
   { category: 'FINAL JEOPARDY', clue: 'From the Latin for "nothing" comes this word meaning to reduce something to nothing', answer: 'annihilate' },
   { category: 'FINAL JEOPARDY', clue: 'This French word means the final resolution of the plot lines of a drama', answer: 'denouement' }
 ];
-];
 
 
 let currentAnswer = "";
