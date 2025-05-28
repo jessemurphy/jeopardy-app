@@ -160,7 +160,6 @@ function showClue(q, cell) {
     group.appendChild(btnAdd);
     group.appendChild(btnSub);
     sb.appendChild(group);
-  });
 
   document.getElementById("popup").style.display = "block";
   cell.classList.add("used");
